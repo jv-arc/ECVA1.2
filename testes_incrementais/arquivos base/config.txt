@@ -1,0 +1,4 @@
+arm_freq_min=900
+arm_freq=900
+core_freq=250
+force_turbo=1
