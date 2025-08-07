@@ -6,8 +6,8 @@ lateral: ["#raspberry_pi_2", "#contagem_decremental", "#mapeamento_memoria", "#p
 state: normal
 ---
 
-# Timer Peripheral - Main Counter no Raspberry Pi 2
-Além da [[contagem incremental com pooling]] que vimos antes, o raspberry pi 2 possui componente de timing, o **timer peripheral** que fornece funcionalidades de temporização, ele possui dois contadores, o [[free timer]] que é incremental e serve para contar intervalos de tempo e o **main timer** que é decremental e pode ser configurado para gerar interrupções de forma periódica.
+# ARM Timer - Main Counter no Raspberry Pi 2
+Além da [[contagem incremental com pooling]] usando o [[system timer]]. O raspberry pi 2 possui um componente chamado de **ARM Timer**, que fornece funcionalidades de temporização, ele possui dois contadores, o [[free timer]] que é incremental e serve para contar intervalos de tempo e o **main timer** que é decremental e pode ser configurado para gerar interrupções de forma periódica.
 
 ## Visão Geral do Funcionamento
 
@@ -24,7 +24,7 @@ Temos uma série de registradores mapeados na memória que nos ajudam a utilizar
 
 **TIMER_CONTROL**: Nesse registrador podemos controlar o funcionamento do timer. Com sinais de enable para o timer, geração de interrupção e também para controlar o **preescaler**.
 
-**TIMER_IRQ_CLR**: É uma flag interna que é automaticamente setada para 1 quando o timer peripheral gera uma interrupção.
+**TIMER_IRQ_CLR**: É uma flag interna que é automaticamente setada para 1 quando o ARM Timer gera uma interrupção.
 
 ### Tabela Resumindo
 Os seguintes registradores são posicionados a partir do offset `0x3F00B400`.
@@ -33,10 +33,10 @@ Os seguintes registradores são posicionados a partir do offset `0x3F00B400`.
 | ------------- | ------ | ---------------------------------- |
 | TIMER_LOAD    | 0x00   | Seta o contador                    |
 | TIMER_VALUE   | 0x04   | Lê o contador                      |
-| TIMER_CONTROL | 0x08   | Configura o timer peripheral       |
+| TIMER_CONTROL | 0x08   | Configura o ARM Timer       |
 | TIMER_IRQ_CLR | 0x0C   | Indica que uma interrupção ocorreu |
 ## Funcionamento do TIMER_CONTROL
-O **TIMER_CONTROL** é um registrador no qual podemos escrever as configurações do **timer peripheral**. Alguns dos bits são reservados ou são para o funcionamento do [[free timer]] e não do **main timer** do qual estamos interessados.
+O **TIMER_CONTROL** é um registrador no qual podemos escrever as configurações do **ARM Timer**. Alguns dos bits são reservados ou são para o funcionamento do [[free timer]] e não do **main timer** do qual estamos interessados.
 
 | Bits | Nome             | Função                               |
 | ---- | ---------------- | ------------------------------------ |
@@ -53,7 +53,7 @@ O **preescaler** é um valor que divide ou "escala" os decrementos com base no c
 $$
 \text{frequência do contador} = \frac{\text{CLOCK}}{\text{PREESCALER}}
 $$
-Os valores do **preescaler** podem ser escolhidos com os bits 3 e 2 e assim dividem o clock do **timer peripheral** que é de 250MHz.
+Os valores do **preescaler** podem ser escolhidos com os bits 3 e 2 e assim dividem o clock do **ARM Timer** que é de 250MHz.
 
 | Bit 3 | Bit 2 | Valor do Prescaler | frequência do contador |
 | ----- | ----- | ------------------ | ---------------------- |
@@ -68,10 +68,10 @@ $$\frac{250MHz}{16}  \approx 15MHz$$
 Um outro exemplo com interrupção seria um TIMER_LOAD=44, com o PREESCALER=10, temos que as interrupções vão ocorrer em:
 $$\frac{250MHz}{44*256} \approx 22kHz$$
 ## Cuidados com o TIMER_IRQ_CLR
-O TIMER_IRQ_CLR é uma flag interna usada pelo **timer peripheral** que indica que foi ele que gerou a interrupção , ela é setada em 1 quando a interrupção é gerada e ela continua setada em 1 indicando ao hardware que foi ativado até que seja restaurada. 
+O TIMER_IRQ_CLR é uma flag interna usada pelo **ARM Timer** que indica que foi ele que gerou a interrupção , ela é setada em 1 quando a interrupção é gerada e ela continua setada em 1 indicando ao hardware que foi ativado até que seja restaurada. 
 
 Isso significa que ao gerar uma interrupção **PRECISAMOS** limpar essa flag, caso contrário **o sistema vai acreditar que a interrupção não foi tratada** 
 
 Pra isso basta fazer uma leitura dela.
 ## Sobre as interrupções
-É importante notar que mesmo que o componente **timer peripheral** esteja adequadamente configurado ainda é necessário configurar o [[interrupt controller]] para que as interrupções sejam recebidas e também um [[interrupt handler]] apropriado para a aplicação.
+É importante notar que mesmo que o componente **ARM Timer** esteja adequadamente configurado ainda é necessário configurar o [[interrupt-controller-gic-400-raspberry-pi-2b-arquitetura-registradores]] para que as interrupções sejam recebidas e também um [[interrupt handler]] apropriado para a aplicação.
