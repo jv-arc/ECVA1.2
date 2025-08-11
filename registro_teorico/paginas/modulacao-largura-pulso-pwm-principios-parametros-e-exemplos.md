@@ -1,11 +1,3 @@
----
-type: theory
-domain: ["#Eletronica/Sinais"]
-topic: ["#Modulacao_Largura_Pulso/Funcionamento_Parametros"]
-lateral: ["#sinal_analogico_digital", "#constante_tempo", "#filtragem_sinal", "#exemplos_graficos", "#duty_cycle", "#resolucao", "#exemplo_8_bits"]
-state: normal
----
-
 # PWM (Pulse Width Modulation)
 É uma técnica para produzir sinais analógicos (ou quase isso) controlando um sinal digital ao longo do tempo.
 

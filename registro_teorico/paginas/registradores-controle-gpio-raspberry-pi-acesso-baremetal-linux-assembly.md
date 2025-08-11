@@ -1,10 +1,3 @@
----
-type: theory
-domain: ["#Ciencia_da_Computacao/Sistemas_Embarcados", "#Hardware/Raspberry_Pi"]
-topic: ["#GPIO/Controle_Registradores", "#Programacao_Low_Level/Acesso_Memoria"]
-lateral: ["#raspberry_pi_modelos", "#arm_assembly", "#baremetal", "#linux_syscalls", "#dev_mem", "#virtualizacao_memoria", "#mapeamento_memoria"]
-state: normal
----
 # Registradores de Controle de GPIO no Raspberry Pi
 
 O Raspberry pi possui uma série de registradores mapeados na memória que podem ser acessados para controlar o funcionamento dos pinos, temos alguns registradores para dar `set` nos pinos, outro para dar `clear`  nos pinos e outros para controlar o modo de funcionamento.

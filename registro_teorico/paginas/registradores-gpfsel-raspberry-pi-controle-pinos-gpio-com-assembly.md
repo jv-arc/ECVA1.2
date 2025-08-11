@@ -1,10 +1,3 @@
----
-type: theory
-domain: ["#Hardware/Raspberry_Pi", "#Ciencia_da_Computacao/Sistemas_Embarcados"]
-topic: ["#GPIO/Configuracao_Pinos", "#Registradores_Controle/GPFSEL"]
-lateral: ["#palavra_3_bits", "#gpio_18", "#pwm", "#arm_assembly", "#manipulacao_bits", "#mascara_bits"]
-state: normal
----
 # Registradores GPFEL
 Dentre todos os registradores de controle de GPIO, os registradores GPFSEL (GPIO Function Select) definem o comportamento dos pinos com palavras de 3 bits.
 ## Encontrando posições

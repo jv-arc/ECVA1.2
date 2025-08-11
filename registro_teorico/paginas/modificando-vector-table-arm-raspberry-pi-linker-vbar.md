@@ -1,11 +1,3 @@
----
-type: theory
-domain: ["#Eletronica/Sistemas_Embarcados", "#Ciencia_da_Computacao/Arquitetura_de_Computadores", "#Ciencia_da_Computacao/Programacao_de_Baixo_Nivel"]
-topic: ["#Vector_Table/Modificacao", "#ARM/Interrupcoes", "#Raspberry_Pi/Boot_Process"]
-lateral: ["#VBAR", "#linker_script", "#baremetal", "#x86_comparacao", "#labels_assembly", "#coprocessador_video"]
-state: draft
----
-
 # Modificando a Vector Table
 Se você tiver prestado atenção em [[sis prog]] você deve ter percebido um problema com o processo de programar um handler customizado.... **Como modificar a vector table?**
 

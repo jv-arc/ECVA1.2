@@ -1,11 +1,3 @@
----
-type: theory
-domain: ["#Eletronica/Microcontroladores", "#Ciencia_da_Computacao/Sistemas_Embarcados", "#Ciencia_da_Computacao/Arquitetura_de_Computadores"]
-topic: ["#Interrupt_Controller/GIC_400", "#Raspberry_Pi/Gerenciamento_Interrupcoes", "#Hardware/Registradores_Controle"]
-lateral: ["#RPi_2B", "#DISTRIBUTOR", "#CPU_INTERFACE", "#GICD_ISENABLERx", "#GICD_ICENABLERx", "#GICC_IAR", "#GICC_EOIR", "#atomicidade", "#priorizacao_interrupcoes", "#roteamento_sinais"]
-state: normal
----
-
 # Interrupt Controller (GIC-400) | RPi 2B
 O "Generic Interrupt Controller" é um componente de hardware que centraliza as informações de interrupção que são enviadas para o processador. Ele recebe as interrupções dos vários dispositivos do sistema e envia para o processador.
 

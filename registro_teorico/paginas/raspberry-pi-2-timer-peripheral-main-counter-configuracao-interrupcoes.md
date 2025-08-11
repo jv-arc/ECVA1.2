@@ -1,11 +1,3 @@
----
-type: theory
-domain: ["#Ciencia_da_Computacao/Sistemas_Embarcados", "#Hardware/Raspberry_Pi"]
-topic: ["#Raspberry_Pi/Timer_Peripheral/Main_Counter", "#Registradores_Hardware", "#Interrupcoes_Hardware"]
-lateral: ["#raspberry_pi_2", "#contagem_decremental", "#mapeamento_memoria", "#prescaler", "#timer_load", "#timer_value", "#timer_control", "#timer_irq_clr", "#clock_250mhz"]
-state: normal
----
-
 # ARM Timer - Main Counter no Raspberry Pi 2
 Além da [[contagem incremental com pooling]] usando o [[system timer]]. O raspberry pi 2 possui um componente chamado de **ARM Timer**, que fornece funcionalidades de temporização, ele possui dois contadores, o [[free timer]] que é incremental e serve para contar intervalos de tempo e o **main timer** que é decremental e pode ser configurado para gerar interrupções de forma periódica.
 

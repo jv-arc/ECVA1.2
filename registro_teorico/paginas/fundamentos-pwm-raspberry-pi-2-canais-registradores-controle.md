@@ -1,10 +1,3 @@
----
-type: theory
-domain: ["#Eletronica/Sistemas_Embarcados", "#Hardware/Raspberry_Pi"]
-topic: ["#PWM/Raspberry_Pi", "#Registradores/Controle_Hardware"]
-lateral: ["#GPIO", "#multiplexacao", "#duty_cycle", "#switching_frequency", "#registradores_hardware", "#bcm2835"]
-state: draft
----
 # PWM no Raspberry Pi 2
 ## Canais e Multiplexação
 No raspberry pi 2 temos dois canais de PWM que podem ser multiplexados para 4 GPIOs distintos, isso significa que podemos escolher quais GPIO que queremos utilizar cada um dos dois canais 

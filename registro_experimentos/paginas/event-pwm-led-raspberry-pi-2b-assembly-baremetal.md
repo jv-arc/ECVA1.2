@@ -1,11 +1,3 @@
----
-type: event
-domain: ["#Eletronica/Microcontroladores", "#Ciencia_da_Computacao/Sistemas_Embarcados", "#Ciencia_da_Computacao/Programacao_de_Baixo_Nivel"]
-topic: ["#Raspberry_Pi/PWM_Configuracao", "#Assembly/Baremetal_Programacao", "#Hardware/Registradores_Controle"]
-lateral: ["#PWM_RNG", "#PWM_DAT", "#PWMCLK_DIV", "#GPIO", "#Raspberry_Pi_2B", "#clock_19_2MHz", "#PWM_PASSWORD", "#debug_LEDs", "#experimento_LED"]
-state: normal
----
-
 # Registro do Experimento de LED com PWD 
 O objetivo é testar se os conhecimentos de PWM estão precisos e se são úteis para o projeto ao programar em assembly um programa que gere um sinal para um LED que seja facilmente testável a olho nu.
 

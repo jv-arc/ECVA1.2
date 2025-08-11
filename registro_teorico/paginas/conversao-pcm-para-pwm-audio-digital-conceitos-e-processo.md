@@ -1,10 +1,3 @@
----
-type: theory
-domain: ["#Ciencia_da_Computacao/Processamento_Sinal_Digital", "#Audio/Digital", "#Hardware/Sistemas_Embarcados"]
-topic: ["#PCM/Conceitos_Fundamentais", "#PWM/Aplicacao_Audio", "#Conversao_Audio/PCM_para_PWM"]
-lateral: ["#intuicao_som_pulsos", "#ondas_mecanicas", "#transformada_fourier", "#taxa_amostragem", "#profundidade_bits", "#44_1_khz", "#16_bits"]
-state: draft
----
 # Conversão PCM para PWM
 ## Modelos de Áudio e Intuição
 Aprendemos desde pequenos sobre como os sons são ondas mecânicas cujo o meio é o ar. Fizemos exercícios no ensino médio sobre batimento, resolvemos problemas no vestibular, provas nas disciplinas de Física 2 na Poli e muito mais. O problema é que esse tipo de modelo é contraprodutivo para entender a conversão.

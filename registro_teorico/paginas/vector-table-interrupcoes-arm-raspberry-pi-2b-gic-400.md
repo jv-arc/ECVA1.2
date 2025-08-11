@@ -1,11 +1,3 @@
----
-type: theory
-domain: ["#Eletronica/Microcontroladores", "#Ciencia_da_Computacao/Sistemas_Embarcados", "#Ciencia_da_Computacao/Arquitetura_de_Computadores"]
-topic: ["#Vector_Table/ARM", "#Interrupcoes/Gerenciamento", "#GIC_400/Funcionamento"]
-lateral: ["#Raspberry_Pi_2B", "#x86_comparacao", "#GICC_IAR", "#GICC_EOIR", "#register_banking", "#subs_pc_lr_4", "#atomicidade", "#handler_IRQ", "#FIQ"]
-state: normal
----
-
 # Vector Table e Interrupções em Sistemas ARM | Raspberry Pi 2B
 O conceito de vector table e interrupções deve ser bem claro da disciplina de [[sistemas operacionais]], MAS... É bom dar uma olhada como isso funciona especificamente em sistemas ARM.
 ## Relembrando a Vector Table
