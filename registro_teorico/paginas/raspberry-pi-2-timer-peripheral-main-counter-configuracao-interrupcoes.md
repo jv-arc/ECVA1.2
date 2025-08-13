@@ -1,5 +1,5 @@
 # ARM Timer - Main Counter no Raspberry Pi 2
-Além da [[contagem incremental com pooling]] usando o [[system timer]]. O raspberry pi 2 possui um componente chamado de **ARM Timer**, que fornece funcionalidades de temporização, ele possui dois contadores, o [[free timer]] que é incremental e serve para contar intervalos de tempo e o **main timer** que é decremental e pode ser configurado para gerar interrupções de forma periódica.
+Além da contagem incremental com pooling usando o system timer. O raspberry pi 2 possui um componente chamado de **ARM Timer**, que fornece funcionalidades de temporização, ele possui dois contadores, o free timer que é incremental e serve para contar intervalos de tempo e o **main timer** que é decremental e pode ser configurado para gerar interrupções de forma periódica.
 
 ## Visão Geral do Funcionamento
 
@@ -25,10 +25,11 @@ Os seguintes registradores são posicionados a partir do offset `0x3F00B400`.
 | ------------- | ------ | ---------------------------------- |
 | TIMER_LOAD    | 0x00   | Seta o contador                    |
 | TIMER_VALUE   | 0x04   | Lê o contador                      |
-| TIMER_CONTROL | 0x08   | Configura o ARM Timer       |
+| TIMER_CONTROL | 0x08   | Configura o ARM Timer              |
 | TIMER_IRQ_CLR | 0x0C   | Indica que uma interrupção ocorreu |
+
 ## Funcionamento do TIMER_CONTROL
-O **TIMER_CONTROL** é um registrador no qual podemos escrever as configurações do **ARM Timer**. Alguns dos bits são reservados ou são para o funcionamento do [[free timer]] e não do **main timer** do qual estamos interessados.
+O **TIMER_CONTROL** é um registrador no qual podemos escrever as configurações do **ARM Timer**. Alguns dos bits são reservados ou são para o funcionamento do free timer e não do **main timer** do qual estamos interessados.
 
 | Bits | Nome             | Função                               |
 | ---- | ---------------- | ------------------------------------ |
@@ -40,6 +41,7 @@ O **TIMER_CONTROL** é um registrador no qual podemos escrever as configuraçõe
 | 3-2  | PRESCALE         | controla o período entre decrementos |
 | 1    | COUNTER_32BIT    | 1=32 bits, 0=16 bits                 |
 | 0    | xxx              | xxx                                  |
+
 ### Prescaler e Controle do Intervalo dos Decrementos
 O **preescaler** é um valor que divide ou "escala" os decrementos com base no clock, seguindo a fórmula
 $$
@@ -59,6 +61,7 @@ $$\frac{250MHz}{16}  \approx 15MHz$$
 
 Um outro exemplo com interrupção seria um TIMER_LOAD=44, com o PREESCALER=10, temos que as interrupções vão ocorrer em:
 $$\frac{250MHz}{44*256} \approx 22kHz$$
+
 ## Cuidados com o TIMER_IRQ_CLR
 O TIMER_IRQ_CLR é uma flag interna usada pelo **ARM Timer** que indica que foi ele que gerou a interrupção , ela é setada em 1 quando a interrupção é gerada e ela continua setada em 1 indicando ao hardware que foi ativado até que seja restaurada. 
 
@@ -66,4 +69,4 @@ Isso significa que ao gerar uma interrupção **PRECISAMOS** limpar essa flag, c
 
 Pra isso basta fazer uma leitura dela.
 ## Sobre as interrupções
-É importante notar que mesmo que o componente **ARM Timer** esteja adequadamente configurado ainda é necessário configurar o [[interrupt-controller-gic-400-raspberry-pi-2b-arquitetura-registradores]] para que as interrupções sejam recebidas e também um [[interrupt handler]] apropriado para a aplicação.
+É importante notar que mesmo que o componente **ARM Timer** esteja adequadamente configurado ainda é necessário configurar o GIC-400 para que as interrupções sejam recebidas e também um interrupt handler apropriado para a aplicação.

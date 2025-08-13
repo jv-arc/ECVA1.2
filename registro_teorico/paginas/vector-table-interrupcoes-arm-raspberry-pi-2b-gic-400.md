@@ -11,7 +11,7 @@ Nos sistemas x86 temos uma tabela GIGANTESCA de handlers (mais de 200), nesses s
 
 No Raspberry Pi e nos processadores ARM no geral temos um esquema diferente. Temos somente DUAS entradas na vector table para interrupções, uma para as interupções normais (IRQ) e outra para as "interrupções rápidas" (FIQ), e dessa forma, temos somente dois handlers de interrupção. Dessa forma o tratamento de tipos diferentes de interrupção deve ser feito pelo **mesmo handler**.
 
-O handler da interrupção no ARM fica responsável por identificar a interrupção utilizando o registrador [[interrupt-controller-gic-400-raspberry-pi-2b-arquitetura-registradores|GICC_AIR]] e executar um branch ou qualquer outra coisa para tratar a interrupção específica.
+O handler da interrupção no ARM fica responsável por identificar a interrupção utilizando o registrador (GICC_AIR)[interrupt-controller-gic-400-raspberry-pi-2b-arquitetura-registradores] e executar um branch ou qualquer outra coisa para tratar a interrupção específica.
 
 ### Vector Table Enxuta no ARM
 Por conta das interrupções se concentrarem em só dois handlers a vector table no ARM fica um pouco mais vazia, tendo bem menos handlers.

@@ -73,7 +73,7 @@ Execução da syscall `nmap`:
     mov r2, #3              @ 3 indica leitura e escrita
     mov r3, #1              @ flags: MAP_SHARED
     mov r5, r4              @ file descriptor q conseguimos no open
-    ldr r6, =gpio_base      @ offset (endereço GPIO que queremos mapear
+    ldr r6, =gpio_base      @ offset do GPIO que queremos mapear
     lsr r6, r6, #12         @ dividir por 4096 para mmap2
     svc #0                         @ chamada do sistema
 

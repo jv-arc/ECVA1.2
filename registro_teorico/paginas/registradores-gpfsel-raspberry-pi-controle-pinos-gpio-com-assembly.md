@@ -1,9 +1,10 @@
 # Registradores GPFEL
 Dentre todos os registradores de controle de GPIO, os registradores GPFSEL (GPIO Function Select) definem o comportamento dos pinos com palavras de 3 bits.
+
 ## Encontrando posições
 Temos um total de 6 registradores do tipo (GPFSEL0 à GPFSEL5) cada um controlando 10 GPIOs em ordem.
 
-Dessa forma podemos identificar o GPFSEL correto ao fazer a divisão inteira donúmero do pino desejado por 10.
+Dessa forma podemos identificar o GPFSEL correto ao fazer a divisão inteira do número do pino desejado por 10.
 
 ```C
 registrador_gpfsel = (numero_pino / 10)
@@ -49,6 +50,7 @@ Temos várias possibilidades para os GPIO, como entrada e saída (000 e 001) e f
 | **5**              | 101     | Função Alternativa 1 (ALT1) |
 | **6**              | 110     | Função Alternativa 2 (ALT2) |
 | **7**              | 111     | Função Alternativa 3 (ALT3) |
+
 Podemos por exemplo setar o GPIO 18 para função alternativa 2 (110) para uso de PWM.
 ## Funcionamento no Código
 Para utilizar os pinos é só acessa-los normalmente seja de forma direta ou pelo nmap, porém como esses registradores controlam vários pinos ao mesmo tempo é necessário apenas mudar os valores que desejamos e evitar mudar outros valores no registrador.
