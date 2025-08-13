@@ -9,7 +9,7 @@ Aqui temos o registro das informações que foram aprendidas ao longo do process
 ## Ideias básicas de música e PWM
 - [Teoria sobre PWM](paginas/modulacao-largura-pulso-pwm-principios-parametros-e-exemplos.md)
 - [PWM no RPi](paginas/fundamentos-pwm-raspberry-pi-2-canais-registradores-controle.md)
-- [Convertendo PCM para PWM](paginas/fundamentos-pwm-raspberry-pi-2-canais-registradores-controle.md)
+- [Convertendo PCM para PWM](paginas/conversao-pcm-para-pwm-audio-digital-conceitos-e-processo.md)
 
 ## Ideias básicas de Interrupção
 - [Gerenciador de interrupções GIC-400](paginas/interrupt-controller-gic-400-raspberry-pi-2b-arquitetura-registradores.md)
