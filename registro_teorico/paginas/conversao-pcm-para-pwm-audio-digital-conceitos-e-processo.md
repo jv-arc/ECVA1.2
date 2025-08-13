@@ -47,7 +47,7 @@ Em primeiro lugar precisamos de valores positivos para o PWM (já que não exist
 Com os valores todos positivos podemos fazer uma regra de três simples para encontrar o **duty cycle** equivalente. Como o **duty cycle** vai de 0% à 100% que equivale à $\text{resolução}$ até $n*\text{resolução}$, assim podemos fazer:
 
 ```math
-\text{range} = \text{resolução} * \frac{1}{100} * \frac{\text{amplitude}}{\text{2^{\text{profundidade de bits}}-1}}
+\text{range} = \text{resolução} * \frac{1}{100} * \frac{\text{amplitude}}{2^{\text{profundidade de bits}}-1}
 ```
 
 ### Considerações Sobre Valores Positivos
