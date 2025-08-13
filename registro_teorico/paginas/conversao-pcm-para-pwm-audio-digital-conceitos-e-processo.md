@@ -29,9 +29,13 @@ No PWM utilizamos pulsos repetidamente de largura variada, produzindo sinais equ
 
 ### Básicos da Codificação PCM
 Pode variar um pouco com a implementação, mas normalmente os valores de PCM são centrados no zero, assim para uma certa profundidade de bits temos o valor mínimo:
-$$\text{min} = -(2^{\text{profundidade de bits} -1} -1)$$
+```math
+\text{min} = -(2^{profundidade -1} -1)
+```
 e o valor máximo:
-$$\text{max} = 2^{\text{profundidade de bits} -1}$$
+```math
+\text{max} = 2^{\text{profundidade de bits} -1}
+```
 
 Ou seja, num PCM com 16 bits de profundidade, os valores variam de $-(2^{15}) = -32.767$ até $2^{15} = 32.768$. Se esses valores ocorrerem numa taxa de amostragem de 44.100 Hz, significa que temos uma amplitudes de $-32.767$ à $32.768$ a cada 22,676 milhonésimos de segundo.
 
@@ -47,7 +51,9 @@ $$\text{range} = \text{resolução} * \frac{1}{100} * \frac{\text{amplitude}}{\t
 Uma coisa que talvez tenha incomodado o leitor mais atento é o fato de termos só deslocado os valores PCM para uma região positiva. Ora, os valores negativos de PCM representam valores em módulo bem altos de amplitude, um valor de PWM próximo de 0 não parece traduzir isso muito bem né? A solução está no uso inteligente do sinal PWM produzido. Como discutido antes, o PWM se aproveita da resposta em frequência da saída para produzir o sinal desejado, se utilizarmos um filtro passa baixas a saída do PWM se aproxima da média da saída. 
 
 Um passa baixas funciona basicamente realizando:
-$$v_{\text{output}}(t) = \frac{1}{T} \int \text{PWM}(t) \ \mathrm{dt}$$
+```math
+v_{\text{output}}(t) = \frac{1}{T} \int \text{PWM}(t) \ \mathrm{dt}
+```
 ISSO É EXATAMENTE A MÉDIA DO SINAL 🤪
 
 Dessa forma, se o PWM varia de 0V até 5V, os sinais produzidos ficam por volta de 2,5V e quando um sinal próximo de 0 é produzido, temos na realidade um desvio na amplitude da média para baixo, efetivamente produzindo uma amplitude negativa!
