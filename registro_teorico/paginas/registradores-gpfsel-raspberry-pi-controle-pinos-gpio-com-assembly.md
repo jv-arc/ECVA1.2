@@ -61,7 +61,7 @@ ldr r0, =GPIO_BASE
 ldr r1, [r0, #GPFSEL1]
 ```
 
- Zera bits 24, 25 e 26 com máscara
+Zera bits 24, 25 e 26 com máscara
 ```armasm
 mov r2, #0b111
 lsl r2, r2, #24

@@ -6,7 +6,8 @@ No raspberry pi 2 temos dois canais de PWM que podem ser multiplexados para 4 GP
 | ----- | ------- | ------------- |
 | PWM0  | 12 e 18 | 32 e 33       |
 | PWM1  | 13 e 19 | 12 e 35       |
-Isso nos dá flexibilidade para selecionar os GPIOs que me melhor se encaixam no projeto. Para multiplexar um canal para um GPIO basta utilizar [[registradores-gpfsel-raspberry-pi-controle-pinos-gpio-com-assembly|GPFSEL]] correspondente na função alternativa "ALT5", ou seja, com o valor `010`.
+
+Isso nos dá flexibilidade para selecionar os GPIOs que me melhor se encaixam no projeto. Para multiplexar um canal para um GPIO basta utilizar (GPFSEL)[registradores-gpfsel-raspberry-pi-controle-pinos-gpio-com-assembly.md] correspondente na função alternativa "ALT5", ou seja, com o valor `010`.
 
 ## Registradores de Controle PWM
 Temos vários registradores mapeados na memória para controlar o funcionamento dos canais PWM, eles seguem em sequência a partir da posição de memória `0x20C000`.
@@ -23,9 +24,7 @@ São o controle direto do sinal transmitido pelo PWM, o PWM_DAT1 controla o cana
 O data quando junto com o range pode controlar o duty cycle do canal.
 
 ### Range - PWM_RGN1 `0x10` e PWM_RGN_2 `0x20`
-São registradores que controlam o "range" dos canais, o PWM_RGN1 controla o range do canal 1 (PWM0) e PWM_RGN2 controla o range do canal 2 (PWM1).
-
-O range é um controle da resolução do PWM, em conjunto com o controle de clock, o range determina a switching frequency dos canais.
+São registradores que controlam o "range" dos canais, o PWM_RGN1 controla o range do canal 1 (PWM0) e PWM_RGN2 controla o range do canal 2 (PWM1). O range é um controle da resolução do PWM, em conjunto com o controle de clock, o range determina a switching frequency dos canais.
 
 ###  Clock e Divisor de Clock - PWMCLK_CNTL `0xA0` e PWMCLK_DIV `0xA4`
 São registradores que controlam o clock dos canais PWM. ???????

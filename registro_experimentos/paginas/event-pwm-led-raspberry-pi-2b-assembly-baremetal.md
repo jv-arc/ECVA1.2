@@ -269,7 +269,7 @@ Se o código não fizesse nada quando tudo dá certo eu não teria como diferenc
 | ON      | ON     | O código executou até o fim |
 
 Liga os dois leds para indicar que o código chegou no fim
-``` armasm
+```armasm
 controle:
 	mov r2, #0b101
 	lsl r2, r2, #17
@@ -305,7 +305,7 @@ end:
 	b end
 ```
 E também um loop de delay 
-``` armasm
+```armasm
 delay:
 	ldr r4, =500
 delay_loop:
