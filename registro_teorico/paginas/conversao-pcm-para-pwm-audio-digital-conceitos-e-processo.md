@@ -30,7 +30,7 @@ No PWM utilizamos pulsos repetidamente de largura variada, produzindo sinais equ
 ### Básicos da Codificação PCM
 Pode variar um pouco com a implementação, mas normalmente os valores de PCM são centrados no zero, assim para uma certa profundidade de bits temos o valor mínimo:
 ```math
-\text{min} = -(2^{profundidade -1} -1)
+\text{min} = -(2^{(\text{profundidade de bits} -1)} -1)
 ```
 e o valor máximo:
 ```math
@@ -45,7 +45,9 @@ Acho que é bem intuitivo entender como a **switching frequency** do PWM é a me
 Em primeiro lugar precisamos de valores positivos para o PWM (já que não existe duty cycle negativo), surpreendentemente, basta somar o oposto do valor mínimo aos valores de amplitude do PCM. Se o PCM em questão tem $-32.767$ como mínimo, se somarmos $32.767$ em todos os valores de amplitude vamos ter todos os valores deslocados para um range positivo, indo de $0$ até $65.535$, que é $2^{16}-1$.
 
 Com os valores todos positivos podemos fazer uma regra de três simples para encontrar o **duty cycle** equivalente. Como o **duty cycle** vai de 0% à 100% que equivale à $\text{resolução}$ até $n*\text{resolução}$, assim podemos fazer:
-$$\text{range} = \text{resolução} * \frac{1}{100} * \frac{\text{amplitude}}{\text{2^{\text{profundidade de bits}}-1}}$$  
+```math
+\text{range} = \text{resolução} * \frac{1}{100} * \frac{\text{amplitude}}{\text{2^{\text{profundidade de bits}}-1}}
+```
 
 ### Considerações Sobre Valores Positivos
 Uma coisa que talvez tenha incomodado o leitor mais atento é o fato de termos só deslocado os valores PCM para uma região positiva. Ora, os valores negativos de PCM representam valores em módulo bem altos de amplitude, um valor de PWM próximo de 0 não parece traduzir isso muito bem né? A solução está no uso inteligente do sinal PWM produzido. Como discutido antes, o PWM se aproveita da resposta em frequência da saída para produzir o sinal desejado, se utilizarmos um filtro passa baixas a saída do PWM se aproxima da média da saída. 
