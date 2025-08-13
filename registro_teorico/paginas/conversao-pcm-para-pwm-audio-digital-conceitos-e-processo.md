@@ -45,6 +45,7 @@ Acho que é bem intuitivo entender como a **switching frequency** do PWM é a me
 Em primeiro lugar precisamos de valores positivos para o PWM (já que não existe duty cycle negativo), surpreendentemente, basta somar o oposto do valor mínimo aos valores de amplitude do PCM. Se o PCM em questão tem $-32.767$ como mínimo, se somarmos $32.767$ em todos os valores de amplitude vamos ter todos os valores deslocados para um range positivo, indo de $0$ até $65.535$, que é $2^{16}-1$.
 
 Com os valores todos positivos podemos fazer uma regra de três simples para encontrar o **duty cycle** equivalente. Como o **duty cycle** vai de 0% à 100% que equivale à $\text{resolução}$ até $n*\text{resolução}$, assim podemos fazer:
+
 ```math
 \text{range} = \text{resolução} * \frac{1}{100} * \frac{\text{amplitude}}{\text{2^{\text{profundidade de bits}}-1}}
 ```
