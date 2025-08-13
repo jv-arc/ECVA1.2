@@ -1,5 +1,5 @@
 # Vector Table e Interrupções em Sistemas ARM | Raspberry Pi 2B
-O conceito de vector table e interrupções deve ser bem claro da disciplina de (sistemas operacionais)[https://caras.com.br/media/_versions/2023-fevereiro/galvao-bueno-filho_widelg.jpg], MAS... É bom dar uma olhada como isso funciona especificamente em sistemas ARM.
+O conceito de vector table e interrupções deve ser bem claro da disciplina de [sistemas operacionais](https://caras.com.br/media/_versions/2023-fevereiro/galvao-bueno-filho_widelg.jpg), MAS... É bom dar uma olhada como isso funciona especificamente em sistemas ARM.
 ## Relembrando a Vector Table
 A vector table é uma estrutura de dados de extrema importância que direciona as exceções/interrupções do sistema para programas específicos, os "handlers", eles tem a responsabilidade de "tratar" do evento, salvando o contexto do processador, executando funções e por fim devolvendo o controle para o processo anterior.
 
@@ -11,7 +11,7 @@ Nos sistemas x86 temos uma tabela GIGANTESCA de handlers (mais de 200), nesses s
 
 No Raspberry Pi e nos processadores ARM no geral temos um esquema diferente. Temos somente DUAS entradas na vector table para interrupções, uma para as interupções normais (IRQ) e outra para as "interrupções rápidas" (FIQ), e dessa forma, temos somente dois handlers de interrupção. Dessa forma o tratamento de tipos diferentes de interrupção deve ser feito pelo **mesmo handler**.
 
-O handler da interrupção no ARM fica responsável por identificar a interrupção utilizando o registrador (GICC_AIR)[interrupt-controller-gic-400-raspberry-pi-2b-arquitetura-registradores.md] e executar um branch ou qualquer outra coisa para tratar a interrupção específica.
+O handler da interrupção no ARM fica responsável por identificar a interrupção utilizando o registrador [GICC_AIR](interrupt-controller-gic-400-raspberry-pi-2b-arquitetura-registradores.md) e executar um branch ou qualquer outra coisa para tratar a interrupção específica.
 
 ### Vector Table Enxuta no ARM
 Por conta das interrupções se concentrarem em só dois handlers a vector table no ARM fica um pouco mais vazia, tendo bem menos handlers.
@@ -36,7 +36,7 @@ Um handler no ARM precisa necessariamente obedecer a estrutura:
 - Restaurar contexto anterior
 - Devolver execução
 
-É sempre bom lembrar que no ARM os registradores são (banqueados)[processadores-arm-modos-operacao-interrupcoes-register-banking-conceitos.md] nos modos FIQ e IRQ e que o endereço de retorno é **salvo automaticamente** em `lr`. Outra coisa digna de nota: o GICC_EOIR apenas indica que a interrupção foi resolvida, ele não restaura o contexto e nem retorna para a função anterior.
+É sempre bom lembrar que no ARM os registradores são [banqueados](processadores-arm-modos-operacao-interrupcoes-register-banking-conceitos.md) nos modos FIQ e IRQ e que o endereço de retorno é **salvo automaticamente** em `lr`. Outra coisa digna de nota: o GICC_EOIR apenas indica que a interrupção foi resolvida, ele não restaura o contexto e nem retorna para a função anterior.
 
 ## Destrinchando a Estrutura
 Vamos ver um mock de um handler para IRQ no ARM.

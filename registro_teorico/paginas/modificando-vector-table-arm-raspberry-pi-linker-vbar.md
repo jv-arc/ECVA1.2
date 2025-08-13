@@ -1,5 +1,5 @@
 # Problema ao modificar a vector table
-Se você tiver prestado atenção em (sis prog)[https://upload.wikimedia.org/wikipedia/commons/d/d4/Galvao_Bueno_2007_Desafio_Internacional_das_Estrelas.jpg] você deve ter percebido um problema com o processo de programar um handler customizado.... **Como modificar a vector table?**
+Se você tiver prestado atenção em [sis prog](https://upload.wikimedia.org/wikipedia/commons/d/d4/Galvao_Bueno_2007_Desafio_Internacional_das_Estrelas.jpg) você deve ter percebido um problema com o processo de programar um handler customizado.... **Como modificar a vector table?**
 
 Não dá para simplesmente escrever lá. Fazer algo como:
 ```armasm

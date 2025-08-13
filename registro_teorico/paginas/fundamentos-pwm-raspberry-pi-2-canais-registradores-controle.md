@@ -7,7 +7,7 @@ No raspberry pi 2 temos dois canais de PWM que podem ser multiplexados para 4 GP
 | PWM0  | 12 e 18 | 32 e 33       |
 | PWM1  | 13 e 19 | 12 e 35       |
 
-Isso nos dá flexibilidade para selecionar os GPIOs que me melhor se encaixam no projeto. Para multiplexar um canal para um GPIO basta utilizar (GPFSEL)[registradores-gpfsel-raspberry-pi-controle-pinos-gpio-com-assembly.md] correspondente na função alternativa "ALT5", ou seja, com o valor `010`.
+Isso nos dá flexibilidade para selecionar os GPIOs que me melhor se encaixam no projeto. Para multiplexar um canal para um GPIO basta utilizar [GPFSEL](registradores-gpfsel-raspberry-pi-controle-pinos-gpio-com-assembly.md) correspondente na função alternativa "ALT5", ou seja, com o valor `010`.
 
 ## Registradores de Controle PWM
 Temos vários registradores mapeados na memória para controlar o funcionamento dos canais PWM, eles seguem em sequência a partir da posição de memória `0x20C000`.
