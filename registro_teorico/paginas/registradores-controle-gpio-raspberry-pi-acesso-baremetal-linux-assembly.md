@@ -13,6 +13,7 @@ Os endereços base são:
 | Raspberry Pi 2, 3, Zero W | 0x3F200000         |
 | Raspberry Pi 4            | 0xFE200000         |
 | Raspberry Pi 5            | 0x1F00200000       |
+
 Acessamos os registradores de controle utilizando os endereços junto com um offset, porém temos formas diferentes dependendo do ambiente de programação.
 
 ## Baremetal
