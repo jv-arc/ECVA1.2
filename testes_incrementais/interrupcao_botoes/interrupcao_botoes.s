@@ -1,34 +1,7 @@
 .section .text
 .global _start
 
-@ Posicao base para GPIO e offsets
-.equ GPIO_BASE,            0x3F200000
-.equ GPFSEL0,              0x00
-.equ GPFSEL1,              0x04
-.equ GPSET0,               0x1C
-.equ GPCLR0,               0x28
-.equ GPEDS0,               0x40
-.equ GPFEN0,               0x58
-.equ GPHEN0,               0x64
-
-
-@ Posicao base e offsets do GIC Distributor
-.equ GICD_BASE,            0x40001000
-.equ GICD_CTLR,            0x000
-.equ GICD_ISENABLER1,      0x104
-.equ GICD_ICENABLER1,      0x184
-.equ GICD_ICFGR4,          0xC10
-.equ GICD_IPRIORITY13,     0x434
-.equ GICD_ITARGETS13,      0x834
-
-
-@ Posicao base e offsets do GIC CPU Interface
-.equ GICC_BASE,            0x40002000
-.equ GICC_CTRL,            0x00
-.equ GICC_PMR,             0x04
-.equ GICC_IAR,             0x0C
-.equ GICC_EOIR,            0x10
-
+.include "posicoes.inc"
 
 _start:
     @ ======== I.Configuracao dos stack pointers ===============
@@ -88,7 +61,6 @@ _start:
     str r1, [r0, #GPFSEL0]
 
 
-
     @------- Configura GPFSEL1 -----------
     ldr r1, [r0, #GPFSEL1]
 
@@ -106,21 +78,15 @@ _start:
     str r1, [r0, #GPFSEL1]
 
 
-
     @-------- Prepara 7/8 pra botoes -------
     @ Cria palavra pro 7 e pro 8
     mov r2, #0b11
     lsl r2, r2, #7
 
-    @ Configura GPIO 7 como falling edge (liga)
+    @ Configura GPIO 7 e 8 como falling edge
     ldr r1, [r0, #GPFEN0]
-    orr r1, r1, #0b10000000
+    orr r1, r1, #0b110000000
     str r1, [r0, #GPFEN0]
-
-    @ Configura GPIO 8 como high edge (desliga)
-    ldr r1, [r0, #GPHEN0]
-    orr r1, r1, #0b100000000
-    str r1, [r0, #GPHEN0]
     
     @ Limpa interrupcoes se houver
     ldr r1, [r0, #GPEDS0]
@@ -129,50 +95,6 @@ _start:
 
 
     @ ============== IV. Configura GIC-400 ====================
-    @ =========================================================
-
-    @----------------- 1. Configura Distriuidor ----------------
-    ldr r0, =GICD_BASE
-
-    @ Desabilita GIC
-    mov r1, #0
-    str r1, [r0, #GICD_CTLR]
-
-    @ ID de interrupcao do GPIO e 49.
-    @ O bit 17 em ISENABLER1 habilita o GPIO_17/18/19.
-    ldr r1, [r0, #GICD_ISENABLER1]
-    orr r1, r1, #0b10000000000000000
-    str r1, [r0, #GICD_ISENABLER1]
-
-    @ Configura GPIO-49 como interrupcao de borda (edge)
-    ldr r1, [r0, #GICD_ICFGR4]
-    orr r1, r1, #0b10000000000000000
-    str r1, [r0, #GICD_ICFGR4]
-
-    @ Configura a prioridade para GPIO-49. Nao e '0'
-    mov r1, #1
-    str r1, [r0, #GICD_IPRIORITY13]
-
-    @ Roteia a interrupcao para o Core 0
-    mov r1, #1
-    str r1, [r0, #GICD_ITARGETS13]
-
-    @ Habilita o GIC de novo
-    mov r1, #1
-    str r1, [r0, #GICD_CTLR]
-
-
-    @----------------- 2. Configura a CPU Interface ----------------
-    ldr r0, =GICC_BASE
-
-    @ Habilita a CPU interface
-    mov r1, #1
-    str r1, [r0, #GICC_CTRL]
-    
-    @ Configura a prioridade
-    mov r1, #255
-    str r1, [r0, #GICC_PMR]
-
 
     @----------------- 3. Loop infinito ----------------
     mov r8, #0          @ Contador (estado inicial)
@@ -190,14 +112,14 @@ loop:
 
 .align 5
 vector_table:
-    b   dummy_handler           ; Reset (nunca deve acontecer)
-    b   dummy_handler           ; Undefined
-    b   dummy_handler           ; SVC
-    b   dummy_handler           ; Prefetch Abort
-    b   dummy_handler           ; Data Abort
-    nop                         ; Reserved
-    b   irq_trampoline          ; IRQ (nosso handler real)
-    b   dummy_handler           ; FIQ
+    b   dummy_handler           @ Reset
+    b   dummy_handler           @ Undefined
+    b   dummy_handler           @ SVC
+    b   dummy_handler           @ Prefetch Abort
+    b   dummy_handler           @ Data Abort
+    nop                         @ Reserved
+    b   irq_trampoline          @ IRQ (nosso handler :p)
+    b   dummy_handler           @ FIQ
 
 dummy_handler:
     @ Acender GPIO17 + GPIO18 = algo inesperado aconteceu
