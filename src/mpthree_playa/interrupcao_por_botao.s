@@ -1,11 +1,26 @@
+
+@ importa handler
 .extern irq_handler
-.global _start
+
+@ importa subrotinas de erro
+.extern error_config
+.extern error_000
+.extern error_001
+.extern error_010
+.extern error_011
+.extern error_100
+.extern error_101
+.extern error_110
+.extern error_111
 
 @ Importa mapeamentos de memoria
 .include "PWM_MAP.inc"
 .include "GPIO_MAP.inc"
+.include "INT_MAP.inc"
 
 .section .text
+.global _start
+
 
 _start:
     @ ========== CONFIGURACAO INICIAL DO SISTEMA ==========
@@ -17,7 +32,7 @@ _start:
 
     @ Muda com seguranca para o modo IRQ e configura a pilha
     bic r1, r0, #0x1F
-    orr r1, r0, #0b10010
+    orr r1, r1, #0b10010
     msr cpsr, r1
     ldr sp, =stack_irq_top
 
@@ -25,7 +40,7 @@ _start:
     msr cpsr, r0
     cpsie i
 
-    @ Configura VFBAR com vector_table
+    @ Configura VBAR com vector_table
     ldr r0, =vector_table
     mcr p15, 0, r0, c12, c0, 0
     
@@ -33,64 +48,137 @@ _start:
     dsb
     isb
 
+    @ Configura sinais de erro
+    bl error_config
+
+    @ Sinaliza fim da configuracao basica
+    bl error_101
+    bl long_delay
+    bl error_000
+    bl long_delay
+    bl long_delay
+    bl long_delay
 
     @ ========== CONFIGURACAO DOS PINOS GPIO ==========
 
     ldr r0, =GPIO_BASE
 
-    @ Configura pinos 7-8 como entrada (para botoes)
+    @ Configura pinos 3 e 4 como entrada (para botoes)
     ldr r1, [r0, #GPFSEL0]
     mov r2, #0b111111
-    lsl r2, r2, #18
+    lsl r2, r2, #9
     bic r1, r1, r2
     str r1, [r0, #GPFSEL0]
 
-    @ Configura pinos 17, 18 e 19 como saida (para LEDs de debug e PWM)
+    @ Configura pinos 18 e 15 como saida (para LED e PWM)
     ldr r1, [r0, #GPFSEL1]
 
-    mov r2, #0b111111111
-    lsl r2, r2, #21
+    mov r2, #0b111000000111
+    lsl r2, r2, #15
     bic r1, r1, r2
 
-    mov r2, #0b001001001
-    lsl r2, r2, #21
+    mov r2, #0b010000000001
+    lsl r2, r2, #15
     orr r1, r1, r2
 
     str r1, [r0, #GPFSEL1]
 
+    @ ------- Teste de Botoes ------------
+
+    ldr r1, [r0, #GPLEV0]
+
+    @ Testa botão 3
+    tst r1, #(1<<3)
+    beq button3_pressed    @ Se LOW, botão está pressionado
+    
+fim_teste_botao3:
+    nop
+
+    @ Testa botão 4
+    tst r1, #(1<<4) 
+    beq button4_pressed
+
+    b end_button_test
+
+button3_pressed:
+    bl error_001           @ LED padrão 001 quando botão 3
+    bl long_delay
+    bl error_000
+    bl long_delay
+    bl error_001
+    bl long_delay
+    bl error_000
+    bl long_delay
+    b  fim_teste_botao3
+    
+button4_pressed:
+    bl error_010           @ LED padrão 010 quando botão 4
+    bl long_delay
+    bl error_000
+    bl long_delay
+    bl error_010
+    bl long_delay
+    bl error_000
+    bl long_delay
+    b end_button_test
+
+end_button_test:
+    bl long_delay
+    bl long_delay
+    bl long_delay
+
 
     @ ========== CONFIGURAÇÃO DE INTERRUPÇÕES GPIO ==========
 
-
-    @ Habilita deteccao de borda de descida nos pinos 7 e 8 (botoes)
-    ldr r1, [r0, #GPFEN0]
-    mov r2, #(1 << 7)
-    orr r2, r2, #(1 << 8)
-    orr r1, r1, r2
-    str r1, [r0, #GPFEN0]
-
-    @ Limpa eventos pendentes nos pinos 7 e 8
-    mov r2, #(1 << 7)
-    orr r2, r2, #(1 << 8)
+    @ Pinos 3 e 4 (botoes)
+    mov r2, #0b11
+    lsl r2, r2, #3
     str r2, [r0, #GPEDS0]
 
+    ldr r1, [r0, #GPFEN0]
+    orr r1, r1, r2
+    str r1, [r0, #GPFEN0]
+    
 
 
-    @ ========== CONFIGURAÇÃO DO CONTROLADOR DE INTERRUPÇÕES ==========
 
-    ldr r0, =0x3F00B000           
-    mov r1, #(1 << 19)           
-    str r1, [r0, #0x214]         
+    @ ====== CONFIGURACAO DE INTERRUPCAO NO BCM2835 ========
+    @ 3 e 4 ficam na IRQ 49
 
-    ldr r0, =0x40000000
+    ldr r0, =BCM2835_INT_BASE
     mov r1, #1
-    str r1, [r0, #0x00C]
+    lsl r1, r1, #17
+    str r1, [r0, #IRQs_ENABLE2]         
 
-    mov r1, #(1 << 8)
-    str r1, [r0, #0x210]
 
+
+
+
+
+    @ ====== CONFIGURACAO DE INTERRUPCAO NO BCM2836 ========
+
+    ldr r0, =BCM2836_INT_BASE
+
+    @ Habilita interrupcao 8
+    mov r1, #1
+    lsl r1, r1, #8
+    str r1, [r0, #IRQCNTL_CORE0]
+
+    @ Roteia para core 0
+    mov r1, #0
+    str r1, [r0, #GPUIRQ_ROUT]
+    
     @ Garante que interrupções estão habilitadas
     cpsie i
+
+
+    @ Sinaliza fim da configuracao de interrupcao
+    bl error_010
+    bl long_delay
+    bl error_000
+    bl long_delay
+    bl long_delay
+    bl long_delay
 
     
     
@@ -183,10 +271,25 @@ wait_config:
     str r1, [r0, #PWM_CTL]
 
     
-    @ ========== LOOP PRINCIPAL ==========
+    @ Sinaliza fim da configuracao de PWM
+    bl error_100
+    bl long_delay
+    bl error_000
+    bl long_delay
+    bl long_delay
+    bl long_delay
 
+
+
+    @ ========== PROGRAMA PRINCIPAL ==========
+
+    @ Inicializa variavel de controle
     mov r8, #0
 
+    @ Sinaliza fim da configuracao
+    bl error_111
+
+    @ Loop infinito
     b .
 
     @ ========== FUNÇÕES AUXILIARES ==========
@@ -198,19 +301,46 @@ delay_loop:
     bne delay_loop
     bx lr 
 
+
+long_delay:
+    ldr r4, =2000000
+long_delay_loop:
+    subs r4, r4, #1
+    bne long_delay_loop
+    bx lr 
+
 dummy_handler:
+    bl error_001
+    bl long_delay
+    bl error_010
+    bl long_delay
+    bl error_100
+    bl long_delay
     b dummy_handler
+
+reset_handler:
+    bl error_111
+    bl long_delay
+    bl error_000
+    bl error_111
+    bl long_delay
+    bl error_000
+    bl error_111
+    bl long_delay
+    bl error_000
+    b _start
+
 
 
 @ ========== TABELA DE VETORES DE EXCEÇÃO ==========
 
 .align 5
 vector_table:
-    b   dummy_handler   @ Reset
+    b   reset_handler   @ Reset
     b   dummy_handler   @ Undefined
     b   dummy_handler   @ SVC
     b   dummy_handler   @ Prefetch Abort
-    b   dummy_handler   @ Prefetch Abort
+    b   dummy_handler   @ Data Abort
     nop                 @ Reserved
     b   irq_handler     @ IRQ
     b   dummy_handler   @ FIQ
@@ -225,3 +355,5 @@ stack_irq_top:
 
 stack_svc: .space 1024
 stack_svc_top:
+
+
