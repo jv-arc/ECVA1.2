@@ -1,10 +1,6 @@
 .include "GPIO_MAP.inc"
 .include "PWM_MAP.inc"
 
-.equ ON,        #1000
-.equ OFF,       #0
-.equ ERRO,      #500
-
 .section .text
 .global irq_handler
 
@@ -12,7 +8,7 @@ irq_handler:
     push {r0-r3, lr}
 
     ldr r0, =GPIO_BASE
-    mov r1, [r0, #GPLEV0]
+    ldr r1, [r0, #GPLEV0]
     
     tst r1, #0b100000000
     bne gpio7_pressed
@@ -27,8 +23,8 @@ gpio8_pressed:
     bne irq_handler_end
     mov r8, #1
 
-    mov r2, =PWM_BASE
-    mov r3, ON
+    ldr r2, =PWM_BASE
+    mov r3, #1000
     str r3, [r2, #PWM_DAT1]
 
     b irq_handler_end
@@ -38,15 +34,15 @@ gpio7_pressed:
     bne irq_handler_end
     mov r8, #0
 
-    mov r2, =PWM_BASE
-    mov r3, OFF
+    ldr r2, =PWM_BASE
+    mov r3, #0
     str r3, [r2, #PWM_DAT1]
 
     b irq_handler_end
 
 error_detected:
-    mov r2, =PWM_BASE
-    mov r3, ERRO
+    ldr r2, =PWM_BASE
+    mov r3, #300
     str r3, [r2, #PWM_DAT1]
 
 irq_handler_end:
