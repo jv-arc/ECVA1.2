@@ -13,6 +13,9 @@
 .extern error_110
 .extern error_111
 
+.global long_delay
+
+
 @ Importa mapeamentos de memoria
 .include "PWM_MAP.inc"
 .include "GPIO_MAP.inc"

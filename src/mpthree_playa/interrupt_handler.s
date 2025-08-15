@@ -1,7 +1,11 @@
 .include "GPIO_MAP.inc"
 .include "PWM_MAP.inc"
 
+.extern error_000
 .extern error_111
+.extern error_110
+.extern error_101
+.extern long_delay
 
 .section .text
 .global irq_handler
@@ -9,14 +13,22 @@
 irq_handler:
     push {r0-r3, lr}
 
+    bl error_111
+    bl long_delay
+    bl error_000
+    bl long_delay
+    bl long_delay
+    bl long_delay
+    
+
     ldr r0, =GPIO_BASE
-    ldr r1, [r0, #GPLEV0]
+    ldr r1, [r0, #GPEDS0]
     
     tst r1, #0b1000
-    beq gpio3_pressed
+    bne gpio3_pressed
 
     tst r1, #0b10000
-    beq gpio4_pressed
+    bne gpio4_pressed
 
     bl error_111
     b irq_handler_end
@@ -26,6 +38,14 @@ gpio3_pressed:
     tst r8, #1
     bne irq_handler_end
     mov r8, #1
+
+    bl error_110
+    bl long_delay
+    bl error_000
+    bl long_delay
+    bl long_delay
+    bl long_delay
+
 
     @ Seta PWM para valor alto
     ldr r2, =PWM_BASE
@@ -39,6 +59,13 @@ gpio4_pressed:
     cmp r8, #0
     beq irq_handler_end
     mov r8, #0
+
+    bl error_101
+    bl long_delay
+    bl error_000
+    bl long_delay
+    bl long_delay
+    bl long_delay
 
     @ Seta PWM para valor baixo
     ldr r2, =PWM_BASE
