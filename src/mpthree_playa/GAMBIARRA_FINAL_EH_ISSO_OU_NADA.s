@@ -1,25 +1,118 @@
+@=============================================
+@ Mapa de Memoria dos GPIO
+@ Para Raspberry 2B (BCM2836)
+@=============================================
+
+@ Base dos GPIO
+.equ GPIO_BASE,     0x3F200000
+
+@------------------Principais------------------
+
+@ GPFSELx
+.equ GPFSEL0,       0x00
+.equ GPFSEL1,       0x04
+.equ GPFSEL2,       0x08
+.equ GPFSEL3,       0x0C
+.equ GPFSEL4,       0x10
+.equ GPFSEL5,       0x14
+
+@ GPSETx
+.equ GPSET0,        0x1C
+.equ GPSET1,        0x20
+
+@ GPCLRx
+.equ GPCLR0,        0x28
+.equ GPCLR1,        0x2C
+
+@-------------------Leitura--------------------
+
+@ Pin Level
+.equ GPLEV0,        0x34
+.equ GPLEV1,        0x38
+
+@ Event Detect
+.equ GPEDS0,        0x40
+.equ GPEDS1,        0x44
+
+@ Rising Edge Detect
+.equ GPREN0,        0x4C
+.equ GPREN1,        0x50
+
+@ Faling Edge Detect
+.equ GPFEN0,        0x58
+.equ GPFEN1,        0x5C
+@=============================================
+@ Mapa de Memoria do PWM 
+@ Para Raspberry 2B (BCM2836)
+@=============================================
+
+@---------------------PWM----------------------
+
+@ Base do PWM
+.equ PWM_BASE,      0x3F20C000
+
+@ Controle
+.equ PWM_CTL,       0x00
+.equ PWM_STA,       0x08
+
+@ Canal 1
+.equ PWM_RNG1,      0x10
+.equ PWM_DAT1,      0x14
+
+@ Canal 2
+.equ PWM_RNG2,      0x20
+.equ PWM_DAT2,      0x24
+
+
+@-------------------PWMCLK--------------------
+
+@ Base do PWMCLK
+.equ PWMCLK_BASE,   0x3F1010A0
+
+@ Clock Control
+.equ PWMCLK_CNTL,   0x00
+.equ PWMCLK_DIV,    0x04
+
+@ Senha
+.equ PWM_PASSWD,    0x5A000000
+
+@==================================================
+@ Mapa de Memoria dos controles de Interupcao
+@ Para Raspberry 2B - BCM2836 com BCM2835 (legado)
+@==================================================
+
+@---------------Enderecos do BCM2835---------------
+
+@ Endereco base
+.equ BCM2835_INT_BASE,  0x3F00B200
+
+@ Offset dos controladores de interrupcao
+.equ IRQs_ENABLE1,  0x10
+.equ IRQs_ENABLE2,  0x14
+
+
+
+@---------------Enderecos do BCM2836---------------
+
+@ Endereco base
+.equ BCM2836_INT_BASE,  0x40000000
+
+@ Offset dos controles dos cores
+.equ IRQCNTL_CORE0, 0x60
+.equ IRQCNTL_CORE1, 0x64
+.equ IRQCNTL_CORE2, 0x68
+.equ IRQCNTL_CORE3, 0x6C
+
+@ Offset do roteamento de GPU IRQ
+.equ GPUIRQ_ROUT,   0x0C
+
+@ OPCODE
+.equ branch_instruction, 0b11101010
+
 
 @ importa handler
 @.extern irq_handler
 
-@ importa subrotinas de erro
-.extern error_config
-.extern error_000
-.extern error_001
-.extern error_010
-.extern error_011
-.extern error_100
-.extern error_101
-.extern error_110
-.extern error_111
-
-.global long_delay
-
-
-@ Importa mapeamentos de memoria
-.include "PWM_MAP.inc"
-.include "GPIO_MAP.inc"
-.include "INT_MAP.inc"
 
 .section .text
 .global _start
@@ -42,6 +135,21 @@ _start:
     @ Volta para o svc
     msr cpsr, r0
     cpsie i
+
+    ldr r0, =vector_stub
+    ldr r1, [r0]
+    mov r0, #0x18
+    str r1, [r0]
+
+    ldr r0, =0x3F00B000
+    ldr r1, =5000000
+    str r1, [r0, #0x400]
+    ldr r1, =0xA2
+    str r1, [r0, #0x408]
+    ldr r0, =0x3F00B000
+    ldr r1, =0x1
+    str r1, [r0, #0x218]
+
 
     @ Configura VBAR com vector_table
     @ldr r0, =vector_table
@@ -339,6 +447,8 @@ reset_handler:
     bl error_000
     b _start
 
+vector_stub:
+    b irq_handler
 
 irq_handler:
     sub lr, lr, #4
@@ -353,22 +463,185 @@ irq_handler:
     
     ldmfd sp!, {r0-r2, pc}^
 
+@ ========================================================
+@ Define funções que acendem pinos especificos para debug
+@ Faz uso dos GPIO 16, 20 e 21
+@ ========================================================
+
+
+@ Bits para os Leds
+.equ LEDs_111,     0b1100010000000000000000
+.equ LEDs_110,     0b1100000000000000000000
+.equ LEDs_101,     0b1000010000000000000000
+.equ LEDs_100,     0b1000000000000000000000  
+.equ LEDs_011,     0b0100010000000000000000
+.equ LEDs_010,     0b0100000000000000000000
+.equ LEDs_001,     0b0000010000000000000000
+
+
+@ Configura os GPIO como Saída
+error_config:
+    push {r0, r1, r2}
+
+    ldr r0, =GPIO_BASE
+
+
+    @ Configura GPIO 16
+    ldr r1, [r0, #GPFSEL1]         
+    mov r2, #0x1C0000    
+    bic r1, r1, r2
+    mov r2, #0x40000
+    orr r1, r1, r2     
+    str r1, [r0, #GPFSEL1]
+
+    @ Configura GPIOs 20 e 21
+    ldr r1, [r0, #GPFSEL2]
+    mov r2, #0x3F
+    bic r1, r1, r2
+    mov r2, #0x9
+    orr r1, r1, r2
+    str r1, [r0, #GPFSEL2]
+
+
+    pop {r0, r1, r2}
+    bx lr
+
+error_000:
+    push {r0, r1}
+
+    ldr r0, =GPIO_BASE
+
+    @ desligar GPIOs
+    ldr r1, =LEDs_111
+    str r1, [r0, #GPCLR0]
+
+    pop {r0, r1}
+    bx lr
+
+error_001:
+    push {r0, r1}
+
+    ldr r0, =GPIO_BASE
+
+    @ ligar GPIOs
+    ldr r1, =LEDs_001
+    str r1, [r0, #GPSET0]
+    
+    @ desligar GPIOs
+    ldr r1, =LEDs_110
+    str r1, [r0, #GPCLR0]
+
+    pop {r0, r1}
+    bx lr
+
+error_010:
+    push {r0, r1}
+
+    ldr r0, =GPIO_BASE
+
+    @ ligar GPIOs
+    ldr r1, =LEDs_010
+    str r1, [r0, #GPSET0]
+    
+    @ desligar GPIOs
+    ldr r1, =LEDs_101
+    str r1, [r0, #GPCLR0]
+
+    pop {r0, r1}
+    bx lr
+
+error_011:
+    push {r0, r1}
+
+    ldr r0, =GPIO_BASE
+
+    @ ligar GPIOs
+    ldr r1, =LEDs_011
+    str r1, [r0, #GPSET0]
+    
+    @ desligar GPIOs
+    ldr r1, =LEDs_100
+    str r1, [r0, #GPCLR0]
+
+    pop {r0, r1}
+    bx lr
+
+error_100:
+    push {r0, r1}
+
+    ldr r0, =GPIO_BASE
+
+    @ ligar GPIOs
+    ldr r1, =LEDs_100
+    str r1, [r0, #GPSET0]
+    
+    @ desligar GPIOs
+    ldr r1, =LEDs_011
+    str r1, [r0, #GPCLR0]
+
+    pop {r0, r1}
+    bx lr
+
+error_101:
+    push {r0, r1}
+
+    ldr r0, =GPIO_BASE
+
+    @ ligar GPIOs
+    ldr r1, =LEDs_101
+    str r1, [r0, #GPSET0]
+    
+    @ desligar GPIOs
+    ldr r1, =LEDs_010
+    str r1, [r0, #GPCLR0]
+
+    pop {r0, r1}
+    bx lr
+
+error_110:
+    push {r0, r1}
+
+    ldr r0, =GPIO_BASE
+
+    @ ligar GPIOs
+    ldr r1, =LEDs_110
+    str r1, [r0, #GPSET0]
+    
+    @ desligar GPIOs
+    ldr r1, =LEDs_001
+    str r1, [r0, #GPCLR0]
+
+    pop {r0, r1}
+    bx lr
+
+error_111:
+    push {r0, r1}
+    ldr r0, =GPIO_BASE
+
+    @ ligar GPIOs
+    ldr r1, =LEDs_111
+    str r1, [r0, #GPSET0]
+
+    pop {r0, r1}
+    bx lr 
+
+
 
 
 
 @ ========== TABELA DE VETORES DE EXCEÇÃO ==========
 
-.section .vectors
-.align 5
-vector_table:
-    b   reset_handler   @ Reset
-    b   dummy_handler   @ Undefined
-    b   dummy_handler   @ SVC
-    b   dummy_handler   @ Prefetch Abort
-    b   dummy_handler   @ Data Abort
-    nop                 @ Reserved
-    b   irq_handler     @ IRQ
-    b   dummy_handler   @ FIQ
+@.section .vectors
+@.align 5
+@vector_table:
+@    b   reset_handler   @ Reset
+@    b   dummy_handler   @ Undefined
+@    b   dummy_handler   @ SVC
+@    b   dummy_handler   @ Prefetch Abort
+@    b   dummy_handler   @ Data Abort
+@    nop                 @ Reserved
+@    b   irq_handler     @ IRQ
+@    b   dummy_handler   @ FIQ
 
 
 @ ========== ÁREA DE DADOS (BSS) ==========

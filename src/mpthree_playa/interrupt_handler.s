@@ -14,12 +14,6 @@ irq_handler:
     push {r0-r3, lr}
 
     bl error_111
-    bl long_delay
-    bl error_000
-    bl long_delay
-    bl long_delay
-    bl long_delay
-    
 
     ldr r0, =GPIO_BASE
     ldr r1, [r0, #GPEDS0]
@@ -30,7 +24,7 @@ irq_handler:
     tst r1, #0b10000
     bne gpio4_pressed
 
-    bl error_111
+    bl error_000
     b irq_handler_end
     
 gpio3_pressed:
@@ -40,12 +34,6 @@ gpio3_pressed:
     mov r8, #1
 
     bl error_110
-    bl long_delay
-    bl error_000
-    bl long_delay
-    bl long_delay
-    bl long_delay
-
 
     @ Seta PWM para valor alto
     ldr r2, =PWM_BASE
@@ -61,12 +49,7 @@ gpio4_pressed:
     mov r8, #0
 
     bl error_101
-    bl long_delay
-    bl error_000
-    bl long_delay
-    bl long_delay
-    bl long_delay
-
+    
     @ Seta PWM para valor baixo
     ldr r2, =PWM_BASE
     mov r3, #300
